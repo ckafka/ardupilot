@@ -329,10 +329,22 @@ void AP_L1_Control::update_waypoint(const struct Location &prev_WP, const struct
     _data_is_stale = false; // status are correctly updated with current waypoint data
 }
 
+
+void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction){
+    update_loiter(center_WP, radius, loiter_direction, 200, 0);
+}
+
 // update L1 control for loitering
-void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction)
+void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction, double vis_anchor_radius, int vis_anchor)
 {
     struct Location _current_loc;
+
+    //checking if vis anchor parameter has been written
+    //int vis_anchor = g.vis_anchor_en; 
+    
+    //uw radius
+    //double rad_act_pwm = _hal.rcin->read(7); //(pwm)
+   // double rad_act = rad_act_pwm/100; //(m)
 
     // scale loiter radius with square of EAS2TAS to allow us to stay
     // stable at high altitude
@@ -347,7 +359,7 @@ void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius
     float K_L1 = 4.0f * _L1_damping * _L1_damping;
 
     //Get current position and velocity
-    if (_ahrs.get_position(_current_loc) == false) {
+    if ((_ahrs.get_position(_current_loc) == false) & !vis_anchor) {
         // if no GPS loc available, maintain last nav/target_bearing
         _data_is_stale = true;
         return;
@@ -355,21 +367,28 @@ void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius
 
     Vector2f _groundspeed_vector = _ahrs.groundspeed_vector();
 
+    Vector2f A_air; 
+
+    float groundSpeed = 0;
+    float airspeed_temp = 0;
+
     //Calculate groundspeed
-    float groundSpeed = MAX(_groundspeed_vector.length() , 1.0f);
-
-
-    // update _target_bearing_cd
-    _target_bearing_cd = get_bearing_cd(_current_loc, center_WP);
-
+    if(vis_anchor) {
+        float *airspeed_ret = &airspeed_temp; 
+        _ahrs.airspeed_estimate(airspeed_ret);
+        groundSpeed = airspeed_temp;
+        _target_bearing_cd = 0;                     //if it's a perfect circle, it doesn't matter. 
+        A_air = Vector2f(center_WP.lat, (center_WP.lng + vis_anchor_radius));
+    } else {
+        groundSpeed = MAX(_groundspeed_vector.length() , 1.0f);
+        _target_bearing_cd = get_bearing_cd(_current_loc, center_WP);
+        A_air = location_diff(center_WP, _current_loc);
+    } 
 
     // Calculate time varying control parameters
     // Calculate the L1 length required for specified period
     // 0.3183099 = 1/pi
     _L1_dist = 0.3183099f * _L1_damping * _L1_period * groundSpeed;
-
-    //Calculate the NE position of the aircraft relative to WP A
-    Vector2f A_air = location_diff(center_WP, _current_loc);
 
     // Calculate the unit vector from WP A to aircraft
     // protect against being on the waypoint and having zero velocity

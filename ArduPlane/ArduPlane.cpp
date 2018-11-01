@@ -348,12 +348,20 @@ void Plane::airspeed_ratio_update(void)
  */
 void Plane::update_GPS_50Hz(void)
 {
-    // get position from AHRS
-    have_position = ahrs.get_position(current_loc);
-    ahrs.get_relative_position_D_home(relative_altitude);
-    relative_altitude *= -1.0f;
+    /*#if TRAPIS 
+        -some sort of function that spits out if we have a TRAPIS position or not.
+            perhaps read gps position, compare to TRAPIS position. if its within some sort of radius, consider it good.
+        ahrs.get_relative_position_D_home(relative_altitude) 
+        relative_altitude *= -1.0f; 
+    */
+    //#else 
+        // get position from AHRS
+        have_position = ahrs.get_position(current_loc);
+        ahrs.get_relative_position_D_home(relative_altitude);
+        relative_altitude *= -1.0f;
 
-    gps.update();
+        gps.update();
+    //#endif 
 }
 
 /*
@@ -739,7 +747,11 @@ void Plane::update_navigation()
     case GUIDED:
         update_loiter(radius);
         break;
-
+    //case VIS_ANCHOR:
+        //radius = abs(aparm.loiter_radius); 
+        //loiter.direction = (aparm.loiter_radius < 0) ? -1 : 1; //depends on the direction of the loiter radius param
+        //update loiter... call 
+        //break;
     case CRUISE:
         update_cruise();
         break;

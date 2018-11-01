@@ -225,7 +225,9 @@ void Plane::update_loiter(uint16_t radius)
         */
         nav_controller->update_waypoint(prev_WP_loc, next_WP_loc);
     } else {
-        nav_controller->update_loiter(next_WP_loc, radius, loiter.direction);
+        double rad_act_pwm = hal.rcin->read(7); //(pwm)
+        double rad_act = rad_act_pwm/100; //(m)
+        nav_controller->update_loiter(next_WP_loc, radius, loiter.direction, rad_act, g.vis_anchor);
     }
 
     if (loiter.start_time_ms == 0) {

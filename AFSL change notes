@@ -1,0 +1,6 @@
+ahrs_get position. in GPS update 50 hz
+
+
+i also want to read about mavlink messaging and how we can send/receive 
+
+ap:: gps is the abstraction that interacts with the gps. should read this

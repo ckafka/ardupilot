@@ -15,6 +15,7 @@
 
 #include <AP_Math/AP_Math.h>
 #include <AP_AHRS/AP_AHRS.h>
+#include <AP_HAL/AP_HAL.h>
 #include <AP_Param/AP_Param.h>
 #include <AP_Navigation/AP_Navigation.h>
 #include <AP_SpdHgtControl/AP_SpdHgtControl.h>
@@ -52,6 +53,7 @@ public:
     float loiter_radius (const float loiter_radius) const;
     void update_waypoint(const struct Location &prev_WP, const struct Location &next_WP, float dist_min = 0.0f);
     void update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction);
+    void update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction, double vis_anchor_radius, int vis_anchor);
     void update_heading_hold(int32_t navigation_heading_cd);
     void update_level_flight(void);
     bool reached_loiter_target(void);
@@ -78,6 +80,9 @@ public:
 private:
     // reference to the AHRS object
     AP_AHRS &_ahrs;
+
+    //reference to the harware abstraction layer
+    const AP_HAL::HAL& _hal = AP_HAL::get_HAL();
 
     // pointer to the SpdHgtControl object
     const AP_SpdHgtControl *_spdHgtControl;

@@ -402,6 +402,7 @@ void Plane::stabilize()
         if (g.stick_mixing == STICK_MIXING_DIRECT || control_mode == STABILIZE) {
             stabilize_stick_mixing_direct();
         }
+        //CRONDUS
         stabilize_yaw(speed_scaler);
     }
 

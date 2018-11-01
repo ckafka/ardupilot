@@ -330,7 +330,8 @@ public:
 
         //
         // 240: PID Controllers
-        k_param_pidNavRoll = 240, // unused
+        k_param_vis_anchor = 240,
+        //k_param_pidNavRoll = 240, // unused
         k_param_pidServoRoll, // unused
         k_param_pidServoPitch, // unused
         k_param_pidNavPitchAirspeed, // unused
@@ -343,6 +344,8 @@ public:
         k_param_dspoiler_rud_rate,
 
         k_param_DataFlash = 253, // Logging Group
+
+
 
         // 254,255: reserved
     };
@@ -493,6 +496,7 @@ public:
 #endif
     AP_Int16 gcs_pid_mask;
     AP_Int8 parachute_channel;
+    AP_Int8 vis_anchor; 
 };
 
 /*

@@ -381,3 +381,8 @@
  #define SOARING_ENABLED ENABLED
 #endif
 #endif
+
+//VISUAL ANCHORING ENABLE
+#ifndef VIS_ANCHOR
+	#define VIS_ANCHOR 0
+#endif

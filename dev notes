@@ -1,0 +1,20 @@
+//add to config.h
+#ifndef VIS_ANCHOR
+	#define VIS_ANCHOR 0
+#endif
+
+//add to parameters.cpp
+// @Param: UW_RADIUS
+    // @DisplayName: Radius of Orbit
+    // @Description: Sets the radius of orbit for visual anchoring flight mode (meters)
+    // @Values: 50 500
+    // @User: Standard
+    GSCALAR(uw_radius, "UW_RADIUS",  200),
+
+
+//and add the corresponding thing for vis anchor. don't think I need UW_RADIUS anymore. 
+
+//in parameters.h
+	set vis_anchor to like 240 in the enumeration. 
+	declare it to be AP_Int8 or something at bottom of file. 
+
